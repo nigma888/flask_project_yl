@@ -1,0 +1,35 @@
+{% for post in posts %}
+{% if loop.last %}
+{% if nickname %}
+<div class="card mb-4" hx-get="{{url_for(request.endpoint, id=nickname)}}?page={{page}}"
+     hx-trigger="revealed" hx-swap="afterend">
+    {% else %}
+    <div class="card mb-4" hx-get="{{url_for(request.endpoint)}}?page={{page}}" hx-trigger="revealed"
+         hx-swap="afterend">
+        {% endif %}
+        {% else %}
+        <div class="card mb-4">
+            {% endif %}
+            <div class="card-header"><a
+                    href="{{url_for('profile', id=post.author)}}" class="text-decoration-none">{{post.author}}</a></div>
+            <div class="card-body">
+                <p class="card-text">{{post.text}}</p>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">{{post.created.strftime('%Y-%m-%d')}}</small>
+                {% if post.author == current_user.id %}
+                {% if nickname %}
+                <a href="/post_delete/{{ post.id }}?redirect_url={{url_for(request.endpoint, id=nickname)}}"
+                   class="btn btn-danger position-absolute bottom-0 end-0 p-2">
+                    Удалить
+                </a>
+                {% else %}
+                <a href="/post_delete/{{ post.id }}?redirect_url={{url_for(request.endpoint)}}"
+                   class="btn btn-danger position-absolute bottom-0 end-0 p-2">
+                    Удалить
+                </a>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}

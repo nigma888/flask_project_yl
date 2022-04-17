@@ -1,0 +1,25 @@
+{% extends 'index.html' %}
+{% block profile_head %}
+{% if nickname %}
+<h2 align="center">{{nickname}}</h2>
+{% else %}
+<h2 align="center">Такого пользователя не существует</h2>
+{% endif %}
+{% if current_user.id != nickname and nickname and current_user.is_authenticated %}
+{% if is_sub %}
+<div align="center">
+    <a href="/subscribe/{{ nickname }}" class="btn btn-secondary">
+        Отписаться
+    </a>
+</div>
+{% else %}
+<div align="center">
+    <a href="/subscribe/{{ nickname }}" class="btn btn-primary">
+        Подписаться
+    </a>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}
+{% block get_url %}{{url_for(request.endpoint, id=nickname)}}?page={{page}}{% endblock %}
+{% block redirect_url %}{{url_for(request.endpoint, id=nickname)}}{% endblock %}

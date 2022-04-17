@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% block profile_head %}<h2 align="center">Новости:</h2>{% endblock %}
+<div class="container-fluid" style="padding-bottom: 60px; padding-top: 20px;">
+    <div class="row justify-content-end">
+        <div class="col-6">
+            {% for post in posts %}
+            {% if loop.last %}
+            <div class="card mb-4"
+                 hx-get="{% block get_url %}{{url_for(request.endpoint)}}?page={{page}}{% endblock %}"
+                 hx-trigger="revealed" hx-swap="afterend">
+                {% else %}
+                <div class="card mb-4">
+                    {% endif %}
+                    <div class="card-header"><a href="{{url_for('profile', id=post.author)}}" class="text-decoration-none">{{post.author}}</a>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{post.text}}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">{{post.created.strftime('%Y-%m-%d')}}</small>
+                        {% if post.author == current_user.id %}
+                        <a href="/post_delete/{{ post.id }}?redirect_url={% block redirect_url %}{{url_for(request.endpoint)}}{% endblock %}" class="btn btn-danger position-absolute bottom-0 end-0 p-2">
+                            Удалить
+                        </a>
+                        {%  endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-3">
+                {% if current_user.is_authenticated %}
+                <p>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseExample" aria-expanded="false"
+                            aria-controls="collapseExample">
+                        Сказать
+                    </button>
+                </p>
+                <div class="collapse" id="collapseExample">
+                    <div class="card card-body">
+                        <form action="" method="post">
+                            {{ form.hidden_tag() }}
+                            {{ form.csrf_token }}
+                            <p>
+                                {{ form.text.label }}<br>
+                                {{ form.text(class="form-control ", type="text", style="height:
+                                150px;")
+                                }}<br>
+                                {% for error in form.text.errors %}
+                            <p class="alert alert-danger" role="alert">
+                                {{ error }}
+                            </p>
+                            {% endfor %}
+                            {{ form.submit(type="submit", class="btn btn-primary") }}
+                            <div>{{ message }}</div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endblock %}
